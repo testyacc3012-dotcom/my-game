@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>WebGL Game</title>
+    <style>
+      :root {
+        /* Screen aspect ratio: 16/9 for landscape, 9/16 for vertical */
+        --custom-aspect-ratio: 16 / 9;
+      }
+
+      html {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      body {
+        background: #000000;
+        margin: 0px;
+        padding: 0px;
+        border: 0px;
+        aspect-ratio: var(--custom-aspect-ratio);
+        position: relative;
+
+        width: min(100vw, 100vh * (var(--custom-aspect-ratio)));
+        width: min(100dvw, 100dvh * (var(--custom-aspect-ratio)));
+
+        height: min(100vh, 100vw / (var(--custom-aspect-ratio)));
+        height: min(100dvh, 100dvw / (var(--custom-aspect-ratio)));
+
+        overflow: hidden;
+      }
+
+      .webgl-content, .gm4html5_div_class, .template-wrap, #unity-container, #unityContainer, .game, #game, #game-container, canvas, #app-container, #canvas-container, #gameContainer, #wrapper, #border, #canvas, #MMFCanvas, .MMFDiv, #openfl-content, .p5Canvas {
+        width: 100% !important;
+        height: 100% !important;
+
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-top: auto !important;
+        margin-bottom: auto !important;
+
+        left: 0 !important;
+        top: 0 !important;
+        inset: 0 !important;
+        transform: none !important; 
+        padding: 0 !important;
+      }
+
+      #unity-footer, #unity-fullscreen-button, .game-footer, .footer, .template-footer, #unity-warning {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="unity-container">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+    </div>
+
+    <!-- Main Framework Script -->
+    <script>
+      var unityFramework = (() => {
+        if (typeof Module === "undefined") Module = {};
+        
+        Module["preInit"] = Module["preInit"] || [];
+        while (Module["preInit"].length > 0) {
+          Module["preInit"].pop()();
+        }
+
+        var shouldRunNow = true;
+        if (Module["noInitialRun"]) shouldRunNow = false;
+        
+        if (shouldRunNow && typeof run === "function") {
+          run();
+        }
+
+        return Module;
+      })();
+
+      if (typeof exports === 'object' && typeof module === 'object') {
+        module.exports = unityFramework;
+      } else if (typeof define === 'function' && define['amd']) {
+        define([], function() { return unityFramework; });
+      } else if (typeof exports === 'object') {
+        exports["unityFramework"] = unityFramework;
+      } else {
+        window.unityFramework = unityFramework;
+      }
+    </script>
+
+    <!-- Unity Instance Initialization -->
+    <script>
+      const config = {
+        dataUrl: "Build/Build.data",
+        frameworkUrl: "Build/Build.framework.js",
+        codeUrl: "Build/Build.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "WebGLGame",
+        productVersion: "1.0",
+      };
+
+      const canvas = document.querySelector("#unity-canvas");
+
+      if (typeof createUnityInstance === "function") {
+        createUnityInstance(canvas, config, (progress) => {
+          // Loading progress
+        }).then((unityInstance) => {
+          window.unityInstance = unityInstance;
+        }).catch((message) => {
+          console.error("Unity Initialization Error:", message);
+        });
+      }
+    </script>
+  </body>
+</html>
